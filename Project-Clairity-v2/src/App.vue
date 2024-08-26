@@ -7,7 +7,7 @@
   <router-link to="/">
     <div class="c_navigation-bar-frame2">
       <img
-        src="C:\Users\marco\Project-Clairity-V2\Project-Clairity-v2\src\assets\logo_1.png"
+        src="/Users/68907/Project-Clairity-V2/Project-Clairity-v2/src/assets/logo_1.png"
         alt="rectangle"
         :width="40"
         :height="40"
@@ -17,7 +17,7 @@
     <p class="c_navigation-bar-text1">PROJECT CLARITY</p>
     </div>
     </div>
-  </router-link>
+  </router-link class="main-content">
     
   
   <div class="c_navigation-bar-frame3">
@@ -53,7 +53,7 @@
   </div>
   </div> 
   </div>
-    <router-view>
+    <router-view class="main-content">
 
     </router-view>
 </template>
@@ -69,6 +69,10 @@ export default {
     width: 100%;
     box-shadow: 0 4px 20px 0 rgba(0,0,0,.1);
     box-sizing: border-box;
+  }
+  
+  #app{
+    background-color: #F2F7F2;
   }
   
   
@@ -247,4 +251,10 @@ export default {
     margin-bottom: 0;
     letter-spacing: 0;
     text-transform: none;
-  }</style>
+
+  
+  }
+  .main-content{
+    margin-left: 208px;
+    margin-right: 208px;
+}</style>
