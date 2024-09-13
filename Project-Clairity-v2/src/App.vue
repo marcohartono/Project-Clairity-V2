@@ -6,13 +6,13 @@
   
   <router-link to="/">
     <div class="c_navigation-bar-frame2">
-      <img
+      <!-- <img
         src="C:\Users\marco\Project-Clairity-V2\Project-Clairity-v2\src\assets\logo_1.png"
         alt="rectangle"
         :width="40"
         :height="40"
         class="c_navigation-bar-rectangle"
-      />
+      /> -->
     <div class="c_navigation-bar-text">
     <p class="c_navigation-bar-text1">PROJECT CLARITY</p>
     </div>

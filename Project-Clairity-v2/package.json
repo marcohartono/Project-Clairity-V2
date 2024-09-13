@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
@@ -16,6 +16,7 @@
     "bootstrap-vue": "^2.23.1",
     "bootstrap-vue-next": "^0.24.10",
     "date-fns": "^3.6.0",
+    "firebase": "^10.13.1",
     "vue": "^3.4.38",
     "vue-router": "^4.3.3"
   },

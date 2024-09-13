@@ -1,0 +1,11 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: project-clarity-app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "${WEBSERVER_PORT:-5173}:5173"
