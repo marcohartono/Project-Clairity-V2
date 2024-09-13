@@ -23,7 +23,7 @@
                 <h1>test</h1>
                 <!-- <p> {{  devices.item.name  }}</p> -->
             </b-col>
-
+            <submit-button></submit-button>
         </b-row>
     </main>
    
@@ -34,9 +34,13 @@
     import axios from 'axios'
     import { defineComponent } from 'vue'
     import { addDays, format } from 'date-fns';
+    import SubmitButton from "./SubmitButton.vue";
 
     export default defineComponent({
         name: 'homePage',
+        components: {
+            SubmitButton,
+        },
         data(){
             return {
                 devices : [],

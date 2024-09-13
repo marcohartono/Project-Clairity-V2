@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import endpoints from '../services/api';
+import firestore from '../services/firestore';
 import { createBootstrap } from 'bootstrap-vue-next'
 
 import 'bootstrap/dist/css/bootstrap.css'
@@ -15,5 +16,6 @@ const app = createApp(App)
 
 // global this.$api
 app.config.globalProperties.$api = endpoints
+app.config.globalProperties.$firestore = firestore
 
 app.mount('#app')
