@@ -15,16 +15,51 @@
                             <p>Deliver real-time data insights</p>
                         </div>
                     </b-col>
-                    <b-col></b-col>
-                    <b-col></b-col>
+                    <b-col>
+                        <div>
+                            <img src="" alt="">
+                            <h3>
+                                Percise
+                            </h3>
+                            <p>Ensure precise measurements</p>
+                        </div>
+                    </b-col>
+                    <b-col>
+                        <div>
+                            <img src="" alt="">
+                            <h3>
+                                Interactive
+                            </h3>
+                            <p>Present interactive data visualizations</p>
+                        </div>
+                    </b-col>
                 </b-row>
             </b-col>
             <b-col>
-                <h1>test</h1>
-                <!-- <p> {{  devices.item.name  }}</p> -->
+            
+                <!-- <Spline
+                    :scene="scenes.first"
+                    :onLoad="onLoad"
+                />
+                 -->
             </b-col>
 
         </b-row>
+        <b-row>
+            <b-row>
+                <!-- image for info -->
+                <img src="" alt=""> 
+
+                <p>
+                    Please click the placemark to view more details
+                </p>
+            </b-row>
+            <b-row>
+                <!-- map goes here -->
+                 
+            </b-row>
+        </b-row>
+
     </main>
    
 
@@ -34,18 +69,21 @@
     import axios from 'axios'
     import { defineComponent } from 'vue'
     import { addDays, format } from 'date-fns';
-
+    import Spline from 'vue-spline';    
+    // Vue.component(Spline);
     export default defineComponent({
         name: 'homePage',
         data(){
             return {
                 devices : [],
+                scenes: {
+                    first: "https://prod.spline.design/Uq6aF3NT8QGE4v13/scene.splinecode"
+                }
             };
         },
         mounted() {
         // Fetch the data when the component is mounted
         this.getData();
-        this.getHistoricalData();
         },
         methods: {
             async getUplink() {
@@ -75,25 +113,7 @@
                     }
                 },
             
-            async getHistoricalData() {
-                try {
-                    const response = await axios.get(`${import.meta.env.VITE_API_URL}/uplinks`, {
-                        params: {
-                        start_date: '2024-01-01', // Example start date
-                        load_payloads: 1,
-                        device_id: this.deviceId, // Fetch data for the current device
-                        per_page: 15,
-                        page: 1
-                    },
-                    headers: {
-                        'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
-                    }
-                });
-                    console.log(response.data.data); // Log the historical data
-                 }catch (error) {
-                console.error('Error fetching historical data:', error);
-            }
-            }
+    
             }
     })
 

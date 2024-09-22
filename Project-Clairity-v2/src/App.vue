@@ -7,7 +7,7 @@
   <router-link to="/">
     <div class="c_navigation-bar-frame2">
       <img
-        src="C:\Users\marco\Project-Clairity-V2\Project-Clairity-v2\src\assets\logo_1.png"
+        src="/logo_1.png"
         alt="rectangle"
         :width="40"
         :height="40"
