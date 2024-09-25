@@ -10,6 +10,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@fawmi/vue-google-maps": "^0.9.79",
     "@splinetool/runtime": "^1.9.25",
     "axios": "^1.7.5",
     "bootstrap": "^5.3.3",
@@ -19,7 +20,8 @@
     "spline-vue": "^0.1.3",
     "vue": "^3.4.38",
     "vue-router": "^4.3.3",
-    "vue-spline": "^0.0.4"
+    "vue-spline": "^0.0.4",
+    "vue3-google-map": "^0.21.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",

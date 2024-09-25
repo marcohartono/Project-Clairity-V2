@@ -36,12 +36,6 @@
                 </b-row>
             </b-col>
             <b-col>
-            
-                <!-- <Spline
-                    :scene="scenes.first"
-                    :onLoad="onLoad"
-                />
-                 -->
             </b-col>
 
         </b-row>
@@ -52,18 +46,19 @@
 
                 <p>
                     Please click the placemark to view more details
+                
                 </p>
             </b-row>
             <b-row>
                 <!-- map goes here -->
-                <div style="height:600px; width:800px">
-                    <l-map ref="map" v-model="zoom" :center="[47.41322, -1.219482]">
-                        <l-tile-layer
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            layer-type="base"
-                            name="OpenStreetMap"
-                        ></l-tile-layer>
-                    </l-map>
+                <div >
+                    <GoogleMap api-key="AIzaSyAu_FjQY1_hxZZUIGej6HLlein1hC1ugMQ" style="height:600px; width:800px" :zoom="12" :center="center">
+                        <Marker 
+                            v-for="(device, index) in devices" :key="index" 
+                            :options="{position: {lat: device.latitude, lng: device.longitude}, title: device.name}"
+                        
+                        />
+                    </GoogleMap>
                 </div>
             </b-row>
         </b-row>
@@ -76,26 +71,18 @@
 <script>
     import axios from 'axios'
     import { defineComponent } from 'vue'
-    import { addDays, format } from 'date-fns';
-    // import Spline from 'vue-spline';    
-    
-    import { LMap, LTileLayer } from "@vue-leaflet/vue-leaflet";
-    import "leaflet/dist/leaflet.css";
-    // Vue.component(Spline);
+    import { GoogleMap, Marker } from 'vue3-google-map';
     export default defineComponent({
         name: 'homePage',
         components: {
-            LMap,
-            LTileLayer,
+            GoogleMap,
+            Marker
         },
         data(){
             return {
                 devices : [],
-                scenes: {
-                    first: "https://prod.spline.design/Uq6aF3NT8QGE4v13/scene.splinecode"
-                },
-                zoom: 2,
-                center: [47.41322, -1.219482],
+                selectedDevice: null,
+                center: {lat: -6.2088, lng: 106.8456},
             };
         },
         mounted() {
