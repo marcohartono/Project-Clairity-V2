@@ -46,19 +46,19 @@
     <p class="c_navigation-bar-text5">About</p>
     </div>
     </div>
-  </router-link>
-  
+  </router-link> 
   </div>
   </div>
   </div>
   </div> 
   </div>
     <router-view class="main-content">
-
+        
     </router-view>
 </template>
 
 <script>
+
 export default {
   name: 'CNavigationBar',
 }

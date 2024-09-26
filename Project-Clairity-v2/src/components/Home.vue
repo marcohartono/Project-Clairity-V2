@@ -51,19 +51,36 @@
             </b-row>
             <b-row>
                 <!-- map goes here -->
+                <GMapMap 
+                    :center="center"
+                    :zoom="13"
+                    map-type-id="terrain"
+                    style="height:600px; width:800px"
+                >
+                    <GMapMarker
+                        v-for="(loc, index) in testloc"
+                        :key="index"
+                        :position="loc"
+                        :clickable="true"
+                        @click="openInfoWindow(index, loc)" 
+                    >
+                    <GMapInfoWindow 
+                        v-if="activeInfoWindow === null" 
+                        :position="activeLocation" 
+                        @closeclick="activeInfoWindow = null" 
+                    >
+                        <div>
+                            
+                            I am in info window
+
+
+                        </div>
+                     </GMapInfoWindow>
+                    </GMapMarker>
+
+
+                </GMapMap>
                 <div >
-                    <GoogleMap api-key="AIzaSyAu_FjQY1_hxZZUIGej6HLlein1hC1ugMQ" style="height:600px; width:800px" :zoom="12" :center="center">
-                        <!-- <Marker 
-                            v-for="(device, index) in devices" :key="index" 
-                            :options="{position: {lat: device.latitude, lng: device.longitude}, title: device.name}"
-                        
-                        /> -->
-                        <Marker 
-                            v-for="(loc, index) in testloc" :key="index"
-                            :options="{position: loc}"
-                        />
-                    
-                    </GoogleMap>
                     
                 </div>
             </b-row>
@@ -77,12 +94,11 @@
 <script>
     import axios from 'axios'
     import { defineComponent } from 'vue'
-    import { GoogleMap, Marker } from 'vue3-google-map';
+
     export default defineComponent({
         name: 'homePage',
         components: {
-            GoogleMap,
-            Marker
+
         },
         data(){
             return {
@@ -93,7 +109,9 @@
                     { "lat": -6.2159, "lng": 106.8523 },
                     { "lat": -6.2127, "lng": 106.8375 },
                     { "lat": -6.2048, "lng": 106.8488 }
-                ]
+                ],
+                activeInfoWindow: null,  
+                activeLocation: null
             
             };
         },
@@ -102,6 +120,10 @@
         this.getData();
         },
         methods: {
+            openInfoWindow(index, loc) {
+                this.activeInfoWindow = index;
+                this.activeLocation = loc;
+            },
             async getUplink() {
             try {
                 const response = await this.$api.getUplinks({
