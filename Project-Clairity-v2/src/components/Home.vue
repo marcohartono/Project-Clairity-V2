@@ -53,12 +53,18 @@
                 <!-- map goes here -->
                 <div >
                     <GoogleMap api-key="AIzaSyAu_FjQY1_hxZZUIGej6HLlein1hC1ugMQ" style="height:600px; width:800px" :zoom="12" :center="center">
-                        <Marker 
+                        <!-- <Marker 
                             v-for="(device, index) in devices" :key="index" 
                             :options="{position: {lat: device.latitude, lng: device.longitude}, title: device.name}"
                         
+                        /> -->
+                        <Marker 
+                            v-for="(loc, index) in testloc" :key="index"
+                            :options="{position: loc}"
                         />
+                    
                     </GoogleMap>
+                    
                 </div>
             </b-row>
         </b-row>
@@ -83,6 +89,12 @@
                 devices : [],
                 selectedDevice: null,
                 center: {lat: -6.2088, lng: 106.8456},
+                testloc: [
+                    { "lat": -6.2159, "lng": 106.8523 },
+                    { "lat": -6.2127, "lng": 106.8375 },
+                    { "lat": -6.2048, "lng": 106.8488 }
+                ]
+            
             };
         },
         mounted() {
