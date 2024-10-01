@@ -51,7 +51,7 @@
             </b-row>
             <b-row>
                 <!-- map goes here -->
-                <GMapMap 
+                <GMapMap ]
                     :center="center"
                     :zoom="13"
                     map-type-id="terrain"
@@ -62,18 +62,14 @@
                         :key="index"
                         :position="loc"
                         :clickable="true"
-                        @click="openInfoWindow(index, loc)" 
+                        @click="openInfoWindow(index)" 
                     >
                     <GMapInfoWindow 
-                        v-if="activeInfoWindow === null" 
-                        :position="activeLocation" 
-                        @closeclick="activeInfoWindow = null" 
+                        :opened="activeInfoWindow === index"
                     >
-                        <div>
-                            
-                            I am in info window
-
-
+                        <div class="info-window">
+                            <h4>{{ fields[index].name }}</h4>
+                            <hr>
                         </div>
                      </GMapInfoWindow>
                     </GMapMarker>
@@ -103,6 +99,7 @@
         data(){
             return {
                 devices : [],
+                fields: [],
                 selectedDevice: null,
                 center: {lat: -6.2088, lng: 106.8456},
                 testloc: [
@@ -111,7 +108,6 @@
                     { "lat": -6.2048, "lng": 106.8488 }
                 ],
                 activeInfoWindow: null,  
-                activeLocation: null
             
             };
         },
@@ -120,9 +116,9 @@
         this.getData();
         },
         methods: {
-            openInfoWindow(index, loc) {
+            openInfoWindow(index ) {
                 this.activeInfoWindow = index;
-                this.activeLocation = loc;
+                this.selectedDevice = this.devices[index];
             },
             async getUplink() {
             try {
@@ -146,13 +142,19 @@
                         }
                         });
                         this.devices = response.data.data;
+                        const fields = await axios.get(`${import.meta.env.VITE_API_URL}/fields`, {
+                        headers: {
+                        'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
+                        }
+                        });
+                         this.fields = fields.data.data;
                     } catch (error) {
                         console.error('Error fetching devices:', error);
                     }
                 },
             
     
-            }
+            },
     })
 
 
