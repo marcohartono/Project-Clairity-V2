@@ -74,6 +74,10 @@ export default {
   #app{
     background-color: #F2F7F2;
   }
+
+  a {
+  text-decoration: none;
+}
   
   
   .c_navigation-bar-frame,

@@ -53,14 +53,16 @@
                 <!-- map goes here -->
                 <GMapMap ]
                     :center="center"
-                    :zoom="13"
+                    :zoom="11.5"
                     map-type-id="terrain"
                     style="height:600px; width:800px"
                 >
                     <GMapMarker
-                        v-for="(loc, index) in testloc"
+                        v-if="fields.length > 1"
+
+                        v-for="(field, index) in fields"
                         :key="index"
-                        :position="loc"
+                        :position="{lat: Number(field?.latitude), lng: Number(field?.longitude) }"
                         :clickable="true"
                         @click="openInfoWindow(index)" 
                     >
@@ -68,8 +70,18 @@
                         :opened="activeInfoWindow === index"
                     >
                         <div class="info-window">
-                            <h4>{{ fields[index].name }}</h4>
+                            <h4>{{ field.name }}</h4>
                             <hr>
+
+                            <b-row  v-for="(device) in devices">
+                                <b-col>
+                                    <p> {{device.name}}</p>
+                                </b-col>
+                                <b-col>
+                                    <p>{{ evaluateCO2(device.latest_payload.co2_ppm) }}</p>
+                                </b-col>
+                            </b-row>
+
                         </div>
                      </GMapInfoWindow>
                     </GMapMarker>
@@ -101,13 +113,14 @@
                 devices : [],
                 fields: [],
                 selectedDevice: null,
-                center: {lat: -6.2088, lng: 106.8456},
+                center: {lat: -6.2088, lng: 106.8454},
                 testloc: [
                     { "lat": -6.2159, "lng": 106.8523 },
                     { "lat": -6.2127, "lng": 106.8375 },
                     { "lat": -6.2048, "lng": 106.8488 }
                 ],
                 activeInfoWindow: null,  
+                
             
             };
         },
@@ -119,6 +132,15 @@
             openInfoWindow(index ) {
                 this.activeInfoWindow = index;
                 this.selectedDevice = this.devices[index];
+            },
+            evaluateCO2(co2Value) {
+                if (co2Value < 1000) {
+                    return 'good';
+                } else if (co2Value >= 1000 && co2Value < 2000) {
+                    return 'fair';
+                } else {
+                    return 'poor';
+                }
             },
             async getUplink() {
             try {
