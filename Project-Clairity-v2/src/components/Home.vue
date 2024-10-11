@@ -81,6 +81,9 @@
                                     <p>{{ evaluateCO2(device.latest_payload.co2_ppm) }}</p>
                                 </b-col>
                             </b-row>
+                            <b-row>
+                                <button @click="handleClick(field.id)">See detail</button>
+                            </b-row>
 
                         </div>
                      </GMapInfoWindow>
@@ -129,6 +132,15 @@
         this.getData();
         },
         methods: {
+            handleClick(field_Id) {
+                const routeData = this.$router.resolve({
+                    name: 'Dashboard',
+                    params: {
+                        fieldId: field_Id,
+                    }
+                });
+                window.open(routeData.href, '_blank');
+            },
             openInfoWindow(index ) {
                 this.activeInfoWindow = index;
                 this.selectedDevice = this.devices[index];
@@ -141,20 +153,6 @@
                 } else {
                     return 'poor';
                 }
-            },
-            async getUplink() {
-            try {
-                const response = await this.$api.getUplinks({
-                    start_date: format(addDays(new Date(), -1), 'yyyy-MM-dd'), // Format 3 days ago to yyyy-MM-dd, e.g. 2024-05-26
-                    end_date: format(new Date(), 'yyyy-MM-dd'), // Format today to yyyy-MM-dd, e.g. 2024-05-29
-                    device_id: this.deviceId,
-                    load_payloads: 1,
-                    per_page: 20
-                });
-                console.log(response.data);
-                } catch (error) {
-                console.error('Error fetching uplink data:', error);
-            }
             },
             async getData() {
                 try {
