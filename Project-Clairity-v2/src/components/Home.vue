@@ -51,7 +51,7 @@
             </b-row>
             <b-row>
                 <!-- map goes here -->
-                <GMapMap ]
+                <GMapMap 
                     :center="center"
                     :zoom="11.5"
                     map-type-id="terrain"
@@ -109,7 +109,7 @@
     export default defineComponent({
         name: 'homePage',
         components: {
-
+            
         },
         data(){
             return {

@@ -1,30 +1,65 @@
 <template>
     <main>
-      <b-row>
-        <b-col>
-          <h1>Dashboard</h1>
-        </b-col>
-        <b-col>
-          <p>test {{ fieldId }}</p>
-        </b-col>
-      </b-row>
       <div id="main-content">
           <b-row>
-            <!-- building layout goes here -->
-             <!-- {{devices[1]}} -->
-             {{ fields }}
-          </b-row>
-          <b-row>
-            <b-col md="3">section</b-col>
-            <b-col md="9">
-              <!-- dropdown -->
+            <b-col>
+              <h1 >Dashboard</h1>
+              <h2 v-if="selectedField">Name: {{ selectedField.name }}</h2>
+            
+            </b-col>
+            <b-col style="align-items: right;">
+              <b-dropdown id="dropdown-1" text="Choose a Location" class="m-md-2">
+              <b-dropdown-item v-for="(field) in fields" 
+              @click="changeDevice(field.id)"
+              >{{field.name}}</b-dropdown-item>
+          </b-dropdown>
             </b-col>
           </b-row>
+          <b-row v-if="selectedField">
+            <GMapMap 
+                    :center="{lat: Number(selectedField.latitude) , lng: Number(selectedField.longitude)}"
+                    :zoom="21"
+                    map-type-id="terrain"
+                    :styles= "mapStyles"
+                    style="height:362px; width:1224px"
+                    
+                >
+                <GMapMarker
+                        v-if="devices.length > 1"
 
-          <b-row>
-            <b-table striped hover :items="items"> 
+                        v-for="(device, index) in devices"
+                        :key="index"
+                        :position="{lat: Number(device?.latitude), lng: Number(device?.longitude) }"
+                        :clickable="true"
+                        
+                    >
+                    </GMapMarker>
+
               
-            </b-table>
+            </GMapMap>
+          </b-row>
+          <b-row>
+            <b-col md="2">
+              <h2>Section</h2>
+            </b-col>
+            <b-col md="10">
+              <b-dropdown
+              text="Block Level Dropdown Menu"
+              class="m-2 w-100"
+              menu-class="dropdown-full-width"
+              block
+              
+              
+              >
+                <b-dropdown-item href="#" v-for="(device) in devices">{{device.name}}</b-dropdown-item>
+                
+              </b-dropdown>
+            </b-col>
+          </b-row>
+          <b-row>
+            <table>
+              
+            </table>
           </b-row>
       </div>
 
@@ -46,6 +81,18 @@ import axios from 'axios'
             selectedDevice: null,
             devices: [],
             fields:[],
+            selectedField: null,
+            mapStyles: [
+                  {
+                      featureType: "poi",
+                      stylers: [{ visibility: "off" }]
+                  },
+                  {
+                      featureType: "transit",
+                      elementType: "labels.icon",
+                      stylers: [{ visibility: "off" }]
+                  }
+              ],
 
 
         }
@@ -55,6 +102,10 @@ import axios from 'axios'
         fieldId() {
             return this.$route.params.fieldId;
         },
+        selectedField() {
+            const fieldId = this.$route.params.fieldId;
+            return this.fields.find(field => field.id === parseInt(fieldId));
+        }
 
 
     },
@@ -63,6 +114,15 @@ import axios from 'axios'
   },
     methods:
     {
+      changeDevice(field_Id){
+      const routeData = this.$router.resolve({
+                    name: 'Dashboard',
+                    params: {
+                        fieldId: field_Id,
+                    }
+                });
+                window.open(routeData.href, '_blank');
+    },
       async getUplink() {
             try {
                 const response = await this.$api.getUplinks({
@@ -97,9 +157,11 @@ import axios from 'axios'
       },
 
     },
+    
 
     created() {
-        console.log("Field ID:", this.fieldId); // Log to verify it’s being set correctly
+        console.log("Field ID:", this.fieldId);
+        console.log(this.selectedField);  // Log to verify it’s being set correctly
     }
 };
 </script>
