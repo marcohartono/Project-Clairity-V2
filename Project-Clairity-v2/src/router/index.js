@@ -7,6 +7,12 @@ const routes = [
     component: () => import(/* webpackChunkName: "home" */ '../components/Home.vue'), // <- Component File Location
   },
   {
+    path: '/dashboard/:fieldId',  
+    name: 'Dashboard',
+    component: () => import(/* webpackChunkName: "home" */ '../components/Dashboard.vue')
+  },
+
+  {
     path: '/about',
     name: 'About',
     component: () => import(/* webpackChunkName: "about" */ '../components/About.vue'),
