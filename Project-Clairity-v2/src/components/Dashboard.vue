@@ -195,6 +195,7 @@
           </b-row>
         </div>
       </b-row>
+      <b-button @click="downloadData">Download Devices Data</b-button>
     </div>
   </main>
 </template>
@@ -207,6 +208,7 @@ import { enUS } from 'date-fns/locale';
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { utils,writeFile } from "xlsx";
 
 export default {
   name: 'Dashboard',
@@ -241,7 +243,17 @@ export default {
       return this.fields.find(field => field.id === parseInt(fieldId));
     },
     excelData() {
-      return this.devices
+      return this.devices.map(device => ({
+        name: device.name,
+        id: device.device_id,
+        eui: device.device_eui,
+        last_uplink: format(new Date(device.last_uplink_at), 'yyyy MM dd HH:mm'),
+        co2: device.latest_payload?.co2_ppm,
+        pm10: device.latest_payload?.mass_concentration_pm010,
+        pm25: device.latest_payload?.mass_concentration_pm025,
+        humidity: device.latest_payload?.relative_humidity,
+        temperature: device.latest_payload?.temperature
+      }))
     }
   },
   mounted() {
@@ -325,6 +337,13 @@ export default {
       } catch (error) {
         console.error('Error fetching devices:', error);
       }
+    },
+    downloadData() {
+      const now = format(new Date(), 'yyyy MM dd HH:mm')
+      const worksheet = utils.json_to_sheet(this.excelData)
+      const workbook = utils.book_new();
+      utils.book_append_sheet(workbook, worksheet, `Devices`);
+      writeFile(workbook, `Devices Report ${now}.xlsx`, { compression: true });
     },
   },
   created() {
