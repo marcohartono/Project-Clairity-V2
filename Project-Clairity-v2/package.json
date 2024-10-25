@@ -12,6 +12,7 @@
   "dependencies": {
     "@fawmi/vue-google-maps": "^0.9.79",
     "@splinetool/runtime": "^1.9.25",
+    "@vuepic/vue-datepicker": "^9.0.3",
     "axios": "^1.7.5",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",

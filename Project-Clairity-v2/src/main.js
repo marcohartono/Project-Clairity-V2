@@ -9,7 +9,8 @@ import { createBootstrap } from 'bootstrap-vue-next'
 import VueGoogleMaps from '@fawmi/vue-google-maps'
 
 
-
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
@@ -25,7 +26,10 @@ const app = createApp(App)
     },
   })
 
+
 // global this.$api
 app.config.globalProperties.$api = endpoints
+app.component('VueDatePicker', VueDatePicker);
+
 
 app.mount('#app')

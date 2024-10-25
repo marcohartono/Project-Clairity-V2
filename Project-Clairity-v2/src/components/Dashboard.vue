@@ -9,10 +9,10 @@
             </b-col>
             <b-col style="align-items: right;">
               <b-dropdown id="dropdown-1" text="Choose a Location" class="m-md-2">
-              <b-dropdown-item v-for="(field) in fields" 
-              @click="changeField(field.id)"
-              >{{field.name}}</b-dropdown-item>
-          </b-dropdown>
+                <b-dropdown-item v-for="(field) in fields" 
+                  @click="changeField(field.id)"
+                >{{field.name}}</b-dropdown-item>
+              </b-dropdown>
             </b-col>
           </b-row>
           <b-row v-if="selectedField">
@@ -53,43 +53,43 @@
               </b-dropdown>
             </b-col>
           </b-row>
-          <b-row v-if="selectedDevice && latestPayload">
-            <div class="container border p-3 mt-3">
-    <!-- Header Row -->
-    <div class="row align-items-center">
-      <div class="col">
-        <h6 class="text-muted">Device</h6>
-      </div>
-      <div class="col text-end">
-        <span class="badge bg-danger rounded-pill">{{ latestPayload }}</span>
-      </div>
-    </div>
 
-    <!-- Table Structure -->
-    <div class="table-responsive mt-2">
-      <table class="table table-bordered">
-        <tbody>
-          <tr>
-            <td class="fw-bold">Name</td>
-            <td colspan="2">{{ selectedDevice.name }}</td>
-          </tr>
-          <tr>
-            <td class="fw-bold">ID</td>
-            <td colspan="2">{{ selectedDevice.id }}</td>
-          </tr>
-          <tr>
-            <td class="fw-bold">Timezone</td>
-            <td colspan="2">Asia/Jakarta (UTC + 07.00)</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+
+          <b-row v-if="selectedDevice && latestPayload">
+          <div class="container border p-3 mt-3">
+          <div class="row align-items-center">
+            <div class="col">
+              <h6 class="text-muted">Device</h6>
+            </div>
+            <div class="col text-end">
+              <span class="badge bg-danger rounded-pill">{{ latestPayload }}</span>
+            </div>
+          </div>
+
+            <div class="table-responsive mt-2">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">Name</td>
+                    <td colspan="2">{{ selectedDevice.name }}</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">ID</td>
+                    <td colspan="2">{{ selectedDevice.id }}</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">Timezone</td>
+                    <td colspan="2">Asia/Jakarta (UTC + 07.00)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
             
           </b-row>
 
-          <b-row>
-            <div class="container border p-3" v-if="selectedDevice">
+          <b-row v-if="selectedDevice">
+            <div class="container border p-3" >
               <!-- Header Row -->
               <div class="row align-items-center">
                 <div class="col">
@@ -161,30 +161,35 @@
           </b-row>
           <b-row>
             <div>
+              <b-row v-if="selectedDevice">
+                <b-col >
+                  <label for="">Start Date</label>
+                  <VueDatePicker v-model="startDate"></VueDatePicker>
+                </b-col>
+                <b-col>
+                  <label for="">End Date</label>
+                  <VueDatePicker v-model="endDate"></VueDatePicker>
+                </b-col>
+                <b-col>
+                  <b-button>Generate</b-button>
+                </b-col>
+                <b-col>
+                  <b-button>Download</b-button>
+                </b-col>
+              </b-row>
               <b-row>
+                <b-col>Data Key</b-col>
                 <b-col>
-                  <label for="startDate" class="form-label">Start Date</label>
-                  <div class="input-group" >
-                    <input type="text" id="startDate" class="form-control" placeholder="Select Start Date" ref="startDatePicker">
-                    <span class="input-group-text"><i class="bi bi-calendar"></i></span>
-                  </div>
-                </b-col>
-                <b-col>
-
-                </b-col>
-                <b-col>
-
-                </b-col>
-                <b-col>
-
-                </b-col>
-                <b-col>
-
+                  <b-dropdown id="dropdown-1" text="Choose a Particulate" class="m-md-2">
+                    <b-dropdown-item ></b-dropdown-item>
+                  </b-dropdown>
                 </b-col>
               </b-row>
             </div>
+
           </b-row>
-      </div>
+
+          </div>
 
     </main>
     
@@ -195,9 +200,11 @@ import { addDays, format, formatDistanceToNow } from 'date-fns'; // Import date 
 // import Chart from '@/components/Chart.vue';
 import axios from 'axios'
 import { enUS } from 'date-fns/locale';
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
+import { ref } from 'vue';
+import Datepicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+import { get } from 'bootstrap-vue-next/dist/src/utils';
+
 
 
  export default {
@@ -222,6 +229,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
                   }
               ],
             latestPayload: null,
+            startDate: null,
+            endDate: null,
 
 
         }
@@ -240,14 +249,14 @@ import "bootstrap-icons/font/bootstrap-icons.css";
     },
     mounted() {
     this.getData();
-    flatpickr(this.$refs.startDatePicker, {
-      enableTime: true,
-      dateFormat: "d M Y H:i"
-    });
-    flatpickr(this.$refs.endDatePicker, {
-      enableTime: true,
-      dateFormat: "d M Y H:i"
-    });
+    // flatpickr(this.$refs.startDatePicker, {
+    //   enableTime: true,
+    //   dateFormat: "d M Y H:i"
+    // });
+    // flatpickr(this.$refs.endDatePicker, {
+    //   enableTime: true,
+    //   dateFormat: "d M Y H:i"
+    // });
   },
     methods:
     {
@@ -275,7 +284,8 @@ import "bootstrap-icons/font/bootstrap-icons.css";
     },
     changeDevice(device_Id) {
       const selected = this.devices.find(device => device.id === device_Id);
-      
+      getUplink();
+
       if (selected) {
           this.selectedDevice = selected;
           console.log("Selected Device:", this.selectedDevice);
@@ -291,12 +301,12 @@ import "bootstrap-icons/font/bootstrap-icons.css";
               console.error("Device not found");
           }
       },
-      async getUplink() {
+      async getUplink(device_id) {
             try {
                 const response = await this.$api.getUplinks({
                     start_date: format(addDays(new Date(), -1), 'yyyy-MM-dd'), // Format 3 days ago to yyyy-MM-dd, e.g. 2024-05-26
                     end_date: format(new Date(), 'yyyy-MM-dd'), // Format today to yyyy-MM-dd, e.g. 2024-05-29
-                    device_id: this.deviceId,
+                    deviceid: device_id,
                     load_payloads: 1,
                     per_page: 20
                 });
