@@ -25,9 +25,9 @@
                     
                 >
                 <GMapMarker
-                        v-if="devices.length > 1"
+                        v-if="chosenField"
 
-                        v-for="(device, index) in devices"
+                        v-for="(device, index) in chosenField"
                         :key="index"
                         :position="{lat: Number(device?.latitude), lng: Number(device?.longitude) }"
                         :clickable="true"
@@ -44,11 +44,11 @@
             </b-col>
             <b-col md="11"> 
               <b-dropdown
-              text="Block Level Dropdown Menu"
+              text="Select a device"
               
               
               >
-                <b-dropdown-item @click="changeDevice(device?.id)" v-for="(device) in devices">{{device.name}}</b-dropdown-item>
+                <b-dropdown-item @click="changeDevice(device?.id)" v-for="(device) in chosenField">{{device.name}}</b-dropdown-item>
                 
               </b-dropdown>
             </b-col>
@@ -160,8 +160,8 @@
             </div>
           </b-row>
           <b-row>
-            <div>
-              <b-row v-if="selectedDevice">
+            <div v-if="selectedDevice">
+              <b-row >
                 <b-col >
                   <label for="">Start Date</label>
                   <VueDatePicker v-model="startDate"></VueDatePicker>
@@ -171,7 +171,7 @@
                   <VueDatePicker v-model="endDate"></VueDatePicker>
                 </b-col>
                 <b-col>
-                  <b-button>Generate</b-button>
+                  <b-button @click="generateReport">Generate</b-button>
                 </b-col>
                 <b-col>
                   <b-button>Download</b-button>
@@ -181,10 +181,18 @@
                 <b-col>Data Key</b-col>
                 <b-col>
                   <b-dropdown id="dropdown-1" text="Choose a Particulate" class="m-md-2">
-                    <b-dropdown-item ></b-dropdown-item>
+                    <b-dropdown-item v-for="(particulate, index) in essentialParticulates" :key="index" @click="selectParticulate(particulate)">{{ particulate.name }}</b-dropdown-item>
                   </b-dropdown>
                 </b-col>
               </b-row>
+              <b-row v-if="chartData">
+                  <Chart :data="chartData" />
+                </b-row>
+              <b-row v-if="tableData.length">
+              <b-col>
+                <b-table :items="tableData" :fields="tableFields" responsive="md"></b-table>
+              </b-col>
+            </b-row>
             </div>
 
           </b-row>
@@ -200,21 +208,26 @@ import { addDays, format, formatDistanceToNow } from 'date-fns'; // Import date 
 // import Chart from '@/components/Chart.vue';
 import axios from 'axios'
 import { enUS } from 'date-fns/locale';
-import { ref } from 'vue';
+// import { ref } from 'vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
-import { get } from 'bootstrap-vue-next/dist/src/utils';
+// import { get } from 'bootstrap-vue-next/dist/src/utils';
+import Chart from '@/components/Chart.vue';
 
 
 
  export default {
     name: 'Dashboard',
+    components: {
+        Chart,
+    },
     data() {
         return {
             devicePayloads: [],
             isLoading: false,
             selectedDevice: null,
             devices: [],
+            chosenField: null,
             fields:[],
             selectedField: null,
             mapStyles: [
@@ -231,7 +244,21 @@ import { get } from 'bootstrap-vue-next/dist/src/utils';
             latestPayload: null,
             startDate: null,
             endDate: null,
-
+            essentialParticulates: [],
+            isLoading: false,
+            tableData: [],
+            tableFields: [
+              { key: 'datetime', label: 'Datetime' },
+              { key: 'co2', label: 'CO2 (ppm)' },
+              { key: 'temperature', label: 'Temperature (°C)' },
+              { key: 'humidity', label: 'Humidity (%)' },
+              { key: 'pm25', label: 'PM2.5 (µg/m³)' },
+              { key: 'pm10', label: 'PM10 (µg/m³)' }
+            ],
+            selectedParticulate: "CO2",
+            chartLabels: [],    // Holds x-axis labels (datetimes)
+            chartDataset: [],  
+            
 
         }
 
@@ -243,23 +270,72 @@ import { get } from 'bootstrap-vue-next/dist/src/utils';
         selectedField() {
             const fieldId = this.$route.params.fieldId;
             return this.fields.find(field => field.id === parseInt(fieldId));
+        },
+        chartData() {
+          // Number of points to display on the chart
+          const maxPoints = 10;
+
+          // Slice the last `maxPoints` items for labels and data
+          const slicedLabels = this.chartLabels.slice(-maxPoints);
+          const slicedDataset = this.chartDataset.slice(-maxPoints);
+
+          return {
+            labels: slicedLabels,
+            datasets: [
+              {
+                label: this.selectedParticulate,
+                data: slicedDataset,
+                backgroundColor: '#41B883',
+                borderColor: '#41B883',
+                fill: false,
+                pointBackgroundColor: '#41B883',
+                pointBorderColor: '#41B883',
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                tension: 0.4,
+              }
+            ]
+          };
         }
+        },
 
 
-    },
     mounted() {
     this.getData();
-    // flatpickr(this.$refs.startDatePicker, {
-    //   enableTime: true,
-    //   dateFormat: "d M Y H:i"
-    // });
-    // flatpickr(this.$refs.endDatePicker, {
-    //   enableTime: true,
-    //   dateFormat: "d M Y H:i"
-    // });
-  },
+    this.getFields();
+    
+    },
     methods:
     {
+      updateChartData() {
+        this.chartLabels = [];
+        this.chartDataset = [];
+
+        // Generate labels and data based on the selected particulate
+        this.devicePayloads.forEach(datePayload => {
+          const date = datePayload.date;
+
+          datePayload.payloads.forEach(payload => {
+            const datetime = `${date} ${payload.time || ''}`.trim();
+
+            // Add datetime to labels
+            this.chartLabels.push(datetime);
+
+            // Add the selected particulate's value to the dataset
+            if (this.selectedParticulate === "CO2") {
+              this.chartDataset.push(payload.co2_ppm);
+            } else if (this.selectedParticulate === "Humidity") {
+              this.chartDataset.push(payload.relative_humidity);
+            } else if (this.selectedParticulate === "Temperature") {
+              this.chartDataset.push(payload.temperature);
+            } else if (this.selectedParticulate === "PM2.5") {
+              this.chartDataset.push(payload.mass_concentration_pm025);
+            } else if (this.selectedParticulate === "PM10") {
+              this.chartDataset.push(payload.mass_concentration_pm010);
+            }
+          });
+        });
+      },
       evaluateCO2(co2Value) {
                 if (co2Value < 1000) {
                     return 'good';
@@ -283,46 +359,59 @@ import { get } from 'bootstrap-vue-next/dist/src/utils';
                 window.open(routeData.href, '_blank');
     },
     changeDevice(device_Id) {
-      const selected = this.devices.find(device => device.id === device_Id);
-      getUplink();
+            const selected = this.chosenField.find(device => device.id === device_Id);
+        this.getUplink(selected.device_id);
 
-      if (selected) {
+        if (selected) {
           this.selectedDevice = selected;
           console.log("Selected Device:", this.selectedDevice);
+
+          // Call loadEssentialParticulates after selecting a device
+          this.loadEssentialParticulates();
+
           if (this.selectedDevice.latest_payload && this.selectedDevice.latest_payload.datetime) {
-              const lastPayloadDate = new Date(this.selectedDevice.latest_payload.datetime);
-              const timeSinceLastPayload = formatDistanceToNow(lastPayloadDate, { addSuffix: true });
-              this.latestPayload = timeSinceLastPayload;
-              console.log("Time since last payload:", timeSinceLastPayload);
+            const lastPayloadDate = new Date(this.selectedDevice.latest_payload.datetime);
+            const timeSinceLastPayload = formatDistanceToNow(lastPayloadDate, { addSuffix: true });
+            this.latestPayload = timeSinceLastPayload;
+            console.log("Time since last payload:", timeSinceLastPayload);
           } else {
-              console.log("No latest payload available");
+            console.log("No latest payload available");
           }
-          } else {
-              console.error("Device not found");
-          }
+        } else {
+          console.error("Device not found");
+        }
       },
       async getUplink(device_id) {
+        console.log("Device ID:", device_id);
             try {
+                const startDate = this.startDate 
+                ? format(this.startDate, 'yyyy-MM-dd') 
+                : format(addDays(new Date(), -3), 'yyyy-MM-dd'); // Default to 3 days ago
+      
+                const endDate = this.endDate 
+                ? format(this.endDate, 'yyyy-MM-dd') 
+                : format(new Date(), 'yyyy-MM-dd'); // Default to today
+
+                console.log("start date", startDate, "end date", endDate);
+
                 const response = await this.$api.getUplinks({
-                    start_date: format(addDays(new Date(), -1), 'yyyy-MM-dd'), // Format 3 days ago to yyyy-MM-dd, e.g. 2024-05-26
-                    end_date: format(new Date(), 'yyyy-MM-dd'), // Format today to yyyy-MM-dd, e.g. 2024-05-29
-                    deviceid: device_id,
+                    start_date: startDate, // Format 3 days ago to yyyy-MM-dd, e.g. 2024-05-26
+                    end_date: endDate, // Format today to yyyy-MM-dd, e.g. 2024-05-29
+                    device_id: device_id,
                     load_payloads: 1,
                     per_page: 20
                 });
-                console.log(response.data);
+                
+                
+                this.devicePayloads = response.data.data;
+                
                 } catch (error) {
                 console.error('Error fetching uplink data:', error);
             }
       },
       async getData() {
                 try {
-                        const response = await axios.get(`${import.meta.env.VITE_API_URL}/devices`, {
-                        headers: {
-                            'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
-                        }
-                        });
-                        this.devices = response.data.data;
+                        
                         const fields = await axios.get(`${import.meta.env.VITE_API_URL}/fields`, {
                         headers: {
                         'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
@@ -333,6 +422,66 @@ import { get } from 'bootstrap-vue-next/dist/src/utils';
                         console.error('Error fetching devices:', error);
                     }
       },
+      async getFields() {
+        try {
+          console.log("Field ID:", this.fieldId);
+
+          // Call the backend method with the fieldId and optional params (e.g., type, device_id)
+          const response = await this.$api.getFields(this.fieldId, {
+          });
+
+          // Assuming 'data' contains the list of devices
+          this.chosenField = response.data.data;
+        } catch (error) {
+          console.error("Error fetching field data:", error);
+        }
+      },
+      async generateReport() {
+        console.log("Generating report...");
+        await this.getUplink(this.selectedDevice.device_id);
+        this.processDataForTable();
+        this.updateChartData();
+      },
+      processDataForTable() {
+        this.tableData = [];
+
+        // Loop through each date-specific array in devicePayloads
+        this.devicePayloads.forEach(datePayload => {
+          const date = datePayload.date;
+
+          // Loop through each payload in the date-specific payloads array
+          datePayload.payloads.forEach(payload => {
+            const datetime = `${date} ${payload.time || ''}`.trim();
+
+            // Push formatted data into tableData array
+            this.tableData.push({
+              datetime: datetime,
+              co2: payload.co2_ppm,
+              temperature: payload.temperature,
+              humidity: payload.relative_humidity,
+              pm25: payload.mass_concentration_pm025,
+              pm10: payload.mass_concentration_pm010
+            });
+          });
+        });
+      },
+      loadEssentialParticulates() {
+        console.log("Loading essential particulates");
+        if (this.selectedDevice && this.selectedDevice.latest_payload) {
+          this.essentialParticulates = [
+            { name: "PM10", value: "PM10" },
+            { name: "PM2.5", value: "PM2.5" },
+            { name: "CO2", value: "CO2" },
+            { name: "Temperature", value: "Temperature" },
+            { name: "Humidity", value: "Humidity" }
+          ];
+        }
+      },
+      selectParticulate(particulate) {
+        this.selectedParticulate = particulate.value;
+        this.updateChartData();
+      },
+      
 
     },
     
