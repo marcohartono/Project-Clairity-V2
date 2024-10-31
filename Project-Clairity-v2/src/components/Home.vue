@@ -49,7 +49,7 @@
                 
                 </p>
             </b-row>
-            <b-row>
+            <b-row :class="{ 'disabled-content': showModal }" >
                 <!-- map goes here -->
                 <GMapMap 
                     :center="center"
@@ -95,7 +95,18 @@
                     
                 </div>
             </b-row>
-        </b-row>
+        </b-row>    
+
+
+        <b-button @click="openModal">
+            Feedback
+        </b-button>
+
+        <!-- Modal component -->
+        <Modal v-if="showModal" @close="closeModal">
+            <FeedbackForm />
+        </Modal>
+
 
     </main>
    
@@ -105,11 +116,14 @@
 <script>
     import axios from 'axios'
     import { defineComponent } from 'vue'
+    import FeedbackForm from './FeedbackForm.vue';
+    import Modal from './Modal.vue';
 
     export default defineComponent({
         name: 'homePage',
         components: {
-            
+            Modal,
+            FeedbackForm
         },
         data(){
             return {
@@ -123,6 +137,7 @@
                     { "lat": -6.2048, "lng": 106.8488 }
                 ],
                 activeInfoWindow: null,  
+                showModal: false
                 
             
             };
@@ -172,9 +187,16 @@
                         console.error('Error fetching devices:', error);
                     }
                 },
-            
+                openModal() {
+                console.log('open modal')
+                this.showModal = true;
+                },
+                closeModal() {
+                    this.showModal = false;
+                }
     
             },
+            
     })
 
 
