@@ -185,8 +185,8 @@
                   </b-dropdown>
                 </b-col>
               </b-row>
-              <b-row v-if="chartData">
-                  <Chart :data="chartData" />
+              <b-row v-if="chartData && chartData.labels.length && chartData.datasets.length">
+                <Chart :data="chartData" /> 
                 </b-row>
               <b-row v-if="tableData.length">
               <b-col>
@@ -272,19 +272,25 @@ import Chart from '@/components/Chart.vue';
             return this.fields.find(field => field.id === parseInt(fieldId));
         },
         chartData() {
-          // Number of points to display on the chart
-          const maxPoints = 10;
+          console.log("chartLabels:", this.chartLabels);    // Check if labels are valid
+          console.log("chartDataset:", this.chartDataset); 
+          // Maximum number of points to display on the chart
+          const maxPoints = 50;
+          const totalPoints = this.chartLabels.length;
 
-          // Slice the last `maxPoints` items for labels and data
-          const slicedLabels = this.chartLabels.slice(-maxPoints);
-          const slicedDataset = this.chartDataset.slice(-maxPoints);
+          // Determine the interval dynamically to fit within maxPoints
+          const interval = Math.ceil(totalPoints / maxPoints);
+
+          // Sample data based on the calculated interval
+          const sampledLabels = this.chartLabels.filter((_, index) => index % interval === 0);
+          const sampledDataset = this.chartDataset.filter((_, index) => index % interval === 0);
 
           return {
-            labels: slicedLabels,
+            labels: sampledLabels,
             datasets: [
               {
                 label: this.selectedParticulate,
-                data: slicedDataset,
+                data: sampledDataset,
                 backgroundColor: '#41B883',
                 borderColor: '#41B883',
                 fill: false,
@@ -399,7 +405,7 @@ import Chart from '@/components/Chart.vue';
                     end_date: endDate, // Format today to yyyy-MM-dd, e.g. 2024-05-29
                     device_id: device_id,
                     load_payloads: 1,
-                    per_page: 20
+                    per_page: 2
                 });
                 
                 
