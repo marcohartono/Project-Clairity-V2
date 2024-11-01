@@ -7,7 +7,7 @@
       <div class="form-group">
         <label for="area">Area</label>
         <select v-model="area">
-          <option value="" disabled>Select Area</option>
+          <option value="" disabled>Select Location</option>
           <option v-for="field in fields" :key="field" >{{ field?.name}}</option>
         </select>
       </div>
@@ -27,17 +27,17 @@
           <img :src="emoji.image" :alt="emoji.text" class="emoji-icon" />
         </label>
       </div>
-  
-      <button @click="submitFeedback">Send</button>
+      <b-button @click="submitFeedback">Submit</b-button>
     </div>
   </template>
   
   <script>
   import { defineComponent, ref } from 'vue';
-  import axios from 'axios'
-
+  import axios from 'axios';
  
   export default defineComponent({
+    components: {
+        },
     setup() {
       const area = ref('');
       const section = ref('');
@@ -52,6 +52,7 @@
       ]);
   
       const submitFeedback = () => {
+        this.$firebase.storeData(section.value, mood.value)
         const feedback = {
           area: area.value,
           section: section.value,

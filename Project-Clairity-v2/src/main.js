@@ -5,8 +5,10 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import endpoints from '../services/api';
+import firebase from '../services/firebase';
 import { createBootstrap } from 'bootstrap-vue-next'
 import VueGoogleMaps from '@fawmi/vue-google-maps'
+
 
 
 import VueDatePicker from '@vuepic/vue-datepicker';
@@ -28,7 +30,9 @@ const app = createApp(App)
 
 
 // global this.$api
+
 app.config.globalProperties.$api = endpoints
+app.config.globalProperties.$firebase = firebase
 app.component('VueDatePicker', VueDatePicker);
 
 
