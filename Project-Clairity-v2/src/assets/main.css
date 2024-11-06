@@ -1,3 +1,215 @@
+/* General page styling */
+.landing-page {
+    margin: 20px;
+    padding: 20px;
+    background-color: #ffffff; 
+}
+
+/* Heading styling */
+.landing-page h2 {
+    color: #5c8e50; /* Green color for "Be Mindful of Your Workspace" */
+    font-weight: bold;
+}
+
+.landing-page h1 {
+    font-size: 2.5em;
+    font-weight: bold;
+}
+
+/* Description paragraph styling */
+.landing-page p {
+    font-size: 1.2em;
+    color: #333; /* Darker text color */
+}
+
+/* Styling for the information boxes */
+.information-box {
+    background-color: #c8d8c4; /* Light green color for boxes */
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    width: 300px; /* Fixed width for consistency */
+    height: 200px; /* Fixed height for consistency */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Icon styling */
+.information-box svg {
+    margin-bottom: 10px;
+    color: #333; /* Darker color for icons */
+
+}
+
+/* Heading within information boxes */
+.information-box h3 {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
+}
+
+/* Description within information boxes */
+.information-box p {
+    color: #555; /* Softer color for the text */
+}
+
+/* Button styling */
+button {
+    background-color: #5c8e50; /* Dark green color */
+    color: white;
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4c7a40; /* Slightly darker shade on hover */
+}
 
 
+/* General styling for the map container */
+.map-container {
+    text-align: center;
+    margin: 20px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: fit-content;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+}
 
+/* Styling for the information icon and text */
+.map-container .info-text {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.map-container .info-text svg {
+    margin-right: 8px;
+    color: #333; /* Darker color for the icon */
+}
+
+/* Map styling */
+.map-container .map {
+    width: 100%;
+    height: 600px;
+    border-radius: 12px; /* Rounded edges for map */
+    overflow: hidden;
+}
+
+/* Info window styling */
+.info-window {
+    background-color: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow for floating effect */
+    text-align: left;
+    width: 250px;
+}
+
+.info-window h4 {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+    padding-bottom: 5px;
+}
+
+.info-window hr {
+    margin: 8px 0;
+    border: none;
+    border-top: 1px solid #ccc;
+}
+
+/* Device rows styling */
+.info-window .device-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.info-window .device-row p {
+    margin: 0;
+    font-size: 0.9em;
+    color: #333;
+}
+
+/* Status label styling */
+.status-label {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.85em;
+    text-align: center;
+}
+
+/* Specific styles for each status */
+.status-good {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-fair {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-poor {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Button styling */
+.info-window button {
+    background-color: #5c8e50; /* Green color */
+    color: white;
+    padding: 8px 16px;
+    font-size: 0.9em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+.info-window button:hover {
+    background-color: #4c7a40; /* Darker green on hover */
+}
+
+
+/* Styling for the feedback button */
+.feedback-button {
+    background-color: #5c8e50; /* Green background color */
+    color: white; /* White text color */
+    padding: 10px 20px; /* Padding for a comfortable clickable area */
+    font-size: 1em; /* Standard font size */
+    font-weight: bold; /* Bold text for emphasis */
+    border: none; /* Removes the default button border */
+    border-radius: 12px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+    margin-top: 20px;
+}
+
+/* Hover effect */
+.feedback-button:hover {
+    background-color: #4c7a40; /* Slightly darker green on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Slightly larger shadow on hover */
+}
+
+/* Active effect */
+.feedback-button:active {
+    background-color: #3c6a30; /* Even darker green when clicked */
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1); /* Smaller shadow when active */
+}

@@ -500,3 +500,176 @@ import Chart from '@/components/Chart.vue';
     }
 };
 </script>
+
+
+<style scoped>
+#main-content {
+  padding: 20px;
+  background-color: white; /* Light green background */
+  font-family: Arial, sans-serif;
+}
+
+/* Title Styling */
+h1 {
+  font-size: 2em;
+  font-weight: bold;
+  color: #333;
+}
+
+h2 {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #5c8e50; /* Green color for headings */
+  margin-top: 10px;
+}
+
+/* Dropdown styling */
+b-dropdown {
+  display: inline-block;
+  font-size: 1em;
+  color: #333;
+}
+
+b-dropdown-item {
+  font-size: 1em;
+  color: #333;
+}
+
+/* Map container styling */
+.gmap {
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Container for sections and tables */
+.container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 15px;
+}
+
+/* Section Header Styling */
+.text-muted {
+  color: #555;
+}
+
+.border {
+  border: 1px solid #e0e0e0;
+}
+
+/* Latest Data Styling */
+.container .row {
+  margin-bottom: 15px;
+}
+
+.container .text-center {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.bg-info {
+  background-color: #6cb9b3 !important; /* Teal color */
+}
+
+.container .badge {
+  font-size: 0.8em;
+}
+
+/* Data Boxes Styling */
+.data-box {
+  background-color: #e0f2f1;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  color: #5c8e50;
+}
+
+/* Individual Stat Boxes */
+.col-3 .h6, .col-4 .h6 {
+  color: #555;
+  font-weight: bold;
+}
+
+.col-3 .h3, .col-4 .h3 {
+  font-size: 1.8em;
+  color: #333;
+}
+
+.col-3 .p-3, .col-4 .p-3 {
+  background-color: #6cb9b3; /* Teal background for indoor AQI */
+  color: white;
+  border-radius: 12px;
+}
+
+/* Button Styling */
+b-button {
+  background-color: #5c8e50;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 8px;
+  margin-top: 15px;
+  transition: background-color 0.3s;
+}
+
+b-button:hover {
+  background-color: #4c7a40;
+}
+
+/* Date Picker and Dropdown */
+label {
+  font-weight: bold;
+  color: #5c8e50;
+}
+
+.vue-datepicker {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 5px 10px;
+}
+
+/* Chart Styling */
+.chart-container {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container .chart {
+  width: 100%;
+  height: 300px;
+}
+
+/* Table Styling */
+b-table {
+  margin-top: 15px;
+  font-size: 0.9em;
+}
+
+.table-responsive {
+  margin-top: 15px;
+}
+
+.table-bordered th, .table-bordered td {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 8px;
+}
+
+.table-bordered th {
+  background-color: #e0f2f1;
+  color: #333;
+}
+
+.table-bordered td {
+  background-color: #fff;
+  color: #555;
+}
+
+</style>
