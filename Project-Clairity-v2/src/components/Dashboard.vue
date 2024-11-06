@@ -174,7 +174,7 @@
                   <b-button @click="generateReport">Generate</b-button>
                 </b-col>
                 <b-col>
-                  <b-button>Download</b-button>
+                  <b-button @click="downloadData" >Download</b-button>
                 </b-col>
               </b-row>
               <b-row>
@@ -210,10 +210,10 @@ import axios from 'axios'
 import { enUS } from 'date-fns/locale';
 
 // import { ref } from 'vue';
-import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 // import { get } from 'bootstrap-vue-next/dist/src/utils';
 import Chart from '@/components/Chart.vue';
+import { utils,writeFile } from "xlsx";
 
 
 
@@ -273,6 +273,7 @@ import Chart from '@/components/Chart.vue';
             const fieldId = this.$route.params.fieldId;
             return this.fields.find(field => field.id === parseInt(fieldId));
         },
+        
         chartData() {
           console.log("chartLabels:", this.chartLabels);    // Check if labels are valid
           console.log("chartDataset:", this.chartDataset); 
@@ -489,6 +490,27 @@ import Chart from '@/components/Chart.vue';
         this.selectedParticulate = particulate.value;
         this.updateChartData();
       },
+      downloadData() {
+      // Format current date for filename
+      const now = format(new Date(), 'yyyy-MM-dd_HH-mm');
+
+      // Convert `tableData` to worksheet format with appropriate headers
+      const worksheet = utils.json_to_sheet(this.tableData.map(data => ({
+        'Datetime': data.datetime,
+        'CO2 (ppm)': data.co2,
+        'Temperature (°C)': data.temperature,
+        'Humidity (%)': data.humidity,
+        'PM2.5 (µg/m³)': data.pm25,
+        'PM10 (µg/m³)': data.pm10
+      })));
+
+      // Create a new workbook and append the worksheet
+      const workbook = utils.book_new();
+      utils.book_append_sheet(workbook, worksheet, 'Devices');
+
+      // Write the workbook to a CSV file
+      writeFile(workbook, `Devices_Report_${now}.csv`, { bookType: 'csv', compression: true });
+    },
       
 
     },
