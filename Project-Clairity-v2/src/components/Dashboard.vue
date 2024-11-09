@@ -44,7 +44,7 @@
             </b-col>
             <b-col md="11"> 
               <b-dropdown
-              text="Select a device"
+              text="Select a Location"
               
               
               >

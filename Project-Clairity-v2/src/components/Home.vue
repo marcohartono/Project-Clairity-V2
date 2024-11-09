@@ -73,7 +73,7 @@
                     :center="center"
                     :zoom="11.5"
                     map-type-id="terrain"
-                    style="height:600px; width:1000px"
+                    style="height:600px; width:100%;"
                 >
                     <GMapMarker
                         v-if="fields.length > 1"
@@ -82,7 +82,7 @@
                         :key="index"
                         :position="{lat: Number(field?.latitude), lng: Number(field?.longitude) }"
                         :clickable="true"
-                        @click="openInfoWindow(index)" 
+                        @click="openInfoWindow(index, field.id)" 
                     >
                     <GMapInfoWindow  
                         :opened="activeInfoWindow === index"
@@ -91,12 +91,12 @@
                             <h4>{{ field.name }}</h4>
                             <hr>
 
-                            <b-row  v-for="(device) in devices">
+                            <b-row  v-for="(device) in devices" >
                                 <b-col class="device-row">
                                     <p> {{device.name}}</p>
                                 </b-col>
                                 <b-col class="status-label">
-                                    <p>{{ evaluateCO2(device.latest_payload.co2_ppm) }}</p>
+                                    <p>{{ evaluateCO2(device.devices[0].latest_payload.co2_ppm) }}</p>
                                 </b-col>
                             </b-row>
                             <b-row>
@@ -151,7 +151,7 @@
                     { "lat": -6.2048, "lng": 106.8488 }
                 ],
                 activeInfoWindow: null,  
-                showModal: false
+                showModal: false,
                 
             
             };
@@ -159,8 +159,28 @@
         mounted() {
         // Fetch the data when the component is mounted
         this.getData();
+        this.getFieldDevices();
         },
         methods: {
+            // async getFieldDevices(fieldId){
+            //     console.log("Field ID:", this.fieldId);
+            //     const response = await this.$api.getFieldDetail(fieldId, {
+            //     });
+
+            //     return response.data.data.blocks;
+            // },
+            async getFieldDevices(){
+                if (!this.fields) return;
+
+                console.log("Fields:", this.fields);
+
+                for (let i = 0; i < this.fields?.length; i++) {
+                    const response = await this.$api.getFieldDetail(fields[i].id, {
+                });
+
+                    this.devices.push(response.data.data.blocks);
+                }
+            },
             handleClick(field_Id) {
                 const routeData = this.$router.resolve({
                     name: 'Dashboard',
@@ -170,9 +190,17 @@
                 });
                 window.open(routeData.href, '_blank');
             },
-            openInfoWindow(index ) {
+            async openInfoWindow(index, fieldId ) {
+                console.log(fieldId)
                 this.activeInfoWindow = index;
                 this.selectedDevice = this.devices[index];
+                
+                const response = await this.$api.getFieldDetail(fieldId, {
+                });
+                this.devices = response.data.data.blocks
+
+
+
             },
             evaluateCO2(co2Value) {
                 if (co2Value < 1000) {
@@ -185,12 +213,12 @@
             },
             async getData() {
                 try {
-                        const response = await axios.get(`${import.meta.env.VITE_API_URL}/devices`, {
-                        headers: {
-                            'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
-                        }
-                        });
-                        this.devices = response.data.data;
+                        // const response = await axios.get(`${import.meta.env.VITE_API_URL}/devices`, {
+                        // headers: {
+                        //     'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
+                        // }
+                        // });
+                        // this.devices = response.data.data;
                         const fields = await axios.get(`${import.meta.env.VITE_API_URL}/fields`, {
                         headers: {
                         'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
