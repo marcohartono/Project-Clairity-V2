@@ -48,7 +48,7 @@
               
               
               >
-                <b-dropdown-item @click="changeDevice(device?.id)" v-for="(device) in chosenField">{{device.name}}</b-dropdown-item>
+                <b-dropdown-item @click="changeDevice(device?.devices[0])" v-for="(device) in chosenField?.blocks">{{device.name}}</b-dropdown-item>
                 
               </b-dropdown>
             </b-col>
@@ -186,7 +186,7 @@
                 </b-col>
               </b-row>
               <b-row v-if="chartData && chartData.labels.length && chartData.datasets.length">
-                <Chart :data="chartData" /> 
+                <Chart v-if="!chartLoading" :data="chartData" /> 
                 </b-row>
               <b-row v-if="tableData.length">
               <b-col>
@@ -260,6 +260,7 @@ import { utils,writeFile } from "xlsx";
             selectedParticulate: "CO2",
             chartLabels: [],    // Holds x-axis labels (datetimes)
             chartDataset: [],  
+            chartLoading: false,
             
 
         }
@@ -317,6 +318,9 @@ import { utils,writeFile } from "xlsx";
     methods:
     {
       updateChartData() {
+        console.log("Updating chart data...");
+        this.chartLoading = true;
+
         this.chartLabels = [];
         this.chartDataset = [];
 
@@ -344,6 +348,11 @@ import { utils,writeFile } from "xlsx";
             }
           });
         });
+
+        setInterval(() => {
+          this.chartLoading = false;
+        }, 1);
+        
       },
       evaluateCO2(co2Value) {
                 if (co2Value < 1000) {
@@ -367,8 +376,8 @@ import { utils,writeFile } from "xlsx";
                 });
                 window.open(routeData.href, '_blank');
     },
-    changeDevice(device_Id) {
-            const selected = this.chosenField.find(device => device.id === device_Id);
+    changeDevice(device) {
+            const selected = device;
         this.getUplink(selected.device_id);
 
         if (selected) {
@@ -436,7 +445,7 @@ import { utils,writeFile } from "xlsx";
           console.log("Field ID:", this.fieldId);
 
           // Call the backend method with the fieldId and optional params (e.g., type, device_id)
-          const response = await this.$api.getFields(this.fieldId, {
+          const response = await this.$api.getFieldDetail(this.fieldId, {
           });
 
           // Assuming 'data' contains the list of devices

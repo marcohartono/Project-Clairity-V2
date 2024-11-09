@@ -18,6 +18,10 @@ const endpoints = {
   getFields(fieldId, params = {}) {
     // Ensure the fieldId is passed as a path variable and params are passed correctly.
     return instanceAxios.get(`/fields/${fieldId}/devices`, { params });
+  },
+  getFieldDetail(fieldId, params = {}) {
+    // Ensure the fieldId is passed as a path variable and params are passed correctly.
+    return instanceAxios.get(`/fields/${fieldId}`, { params });
   }
 }
 
