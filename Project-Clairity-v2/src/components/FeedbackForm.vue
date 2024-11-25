@@ -4,12 +4,13 @@
       <p>Could you please let us know your current location?</p>
   
       <div class="form-group">
-        <label for="area">Area</label>
-        <select v-model="area" v-if="fields.length">
-          <option value="" disabled>Select Location</option>
-          <option v-for="field in fields" :key="field.id" :value="field.name">{{ field.name }}</option>
-        </select>
-      </div>
+  <label for="area">Area</label>
+  <select v-model="area" @change="selectField(area)" v-if="fields.length">
+    <option value="" disabled>Select Location</option>
+    <option v-for="field in fields" :key="field.id" :value="field.id">{{ field.name }}</option>
+  </select>
+</div>
+
   
       <div class="form-group">
         <label for="section">Section</label>
@@ -32,80 +33,102 @@
   </template>
   
   <script>
-import { defineComponent, ref, onMounted } from 'vue';
 import axios from 'axios';
 import firebase from '../../services/firebase';
 
-export default defineComponent({
-  setup(props, { emit }) {
-    const area = ref('');
-    const section = ref('');
-    const mood = ref('');
-    const fields = ref([]);
-    const devices = ref([]);
-    const emojiOptions = ref([
-      { text: 'Very Tired', image: '/emojis/emoji-frown-fill.svg' },
-      { text: 'Tired', image: '/emojis/emoji-neutral-fill.svg' },
-      { text: 'Productive', image: '/emojis/emoji-smile-fill.svg' },
-      { text: 'Very Productive', image: '/emojis/emoji-laughing-fill.svg' },
-    ]);
+export default {
+  name: 'FeedbackForm',
 
-    const getData = async () => {
+  data() {
+    return {
+      area: '',
+      section: '',
+      mood: '',
+      fields: [],
+      devices: [],
+      emojiOptions: [
+        { text: 'Very Tired', image: '/emojis/emoji-frown-fill.svg' },
+        { text: 'Tired', image: '/emojis/emoji-neutral-fill.svg' },
+        { text: 'Productive', image: '/emojis/emoji-smile-fill.svg' },
+        { text: 'Very Productive', image: '/emojis/emoji-laughing-fill.svg' },
+      ],
+    };
+  },
+
+  methods: {
+    async getData() {
       try {
         const fieldsResponse = await axios.get(`${import.meta.env.VITE_API_URL}/fields`, {
           headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
-          }
+            Authorization: `Bearer ${import.meta.env.VITE_API_TOKEN}`,
+          },
         });
-        fields.value = fieldsResponse.data.data;
-
-        const devicesResponse = await axios.get(`${import.meta.env.VITE_API_URL}/devices`, {
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
-          }
-        });
-        devices.value = devicesResponse.data.data;
+        this.fields = fieldsResponse.data.data;
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching fields:', error);
       }
-    };
+    },
 
-    const submitFeedback = () => {
-      // Check if all fields are filled
-      if (!area.value || !section.value || !mood.value) {
-        alert("Please fill in all fields before submitting.");
+    async getFieldDevices() {
+      if (!this.fields.length) return;
+
+      console.log('Fields:', this.fields);
+
+      for (let i = 0; i < this.fields.length; i++) {
+        try {
+          const response = await this.$api.getFieldDetail(this.fields[i].id);
+          this.devices.push(response.data.data.blocks);
+        } catch (error) {
+          console.error(`Error fetching devices for field ${this.fields[i].id}:`, error);
+        }
+      }
+    },
+
+    async selectField(fieldId) {
+      if (!fieldId) return;
+
+      try {
+        console.log('Fetching devices for field:', fieldId);
+        const response = await this.$api.getFieldDetail(fieldId, {
+        });
+
+        this.devices = response.data.data.blocks || [];
+        console.log('Devices:', this.devices);
+      } catch (error) {
+        console.error('Error fetching devices for field:', error);
+        this.devices = [];
+      }
+    },
+
+    submitFeedback() {
+      if (!this.area || !this.section || !this.mood) {
+        alert('Please fill in all fields before submitting.');
         return;
       }
 
-      // Store data in Firebase (or handle data submission)
-      firebase.storeData(section.value, mood.value);
       const feedback = {
-        area: area.value,
-        section: section.value,
-        mood: mood.value,
+        area: this.area,
+        section: this.section,
+        mood: this.mood,
       };
-      console.log(feedback);
 
-      // Emit an event to notify the parent component to close the modal
-      emit("close");
-    };
+      // Store data in Firebase
+      firebase.storeData(this.section, this.mood);
 
-    onMounted(() => {
-      getData();
-    });
+      console.log('Feedback submitted:', feedback);
 
-    return {
-      area,
-      section,
-      mood,
-      fields,
-      devices,
-      emojiOptions,
-      submitFeedback,
-    };
-  }
-});
+      // Emit an event to close the modal
+      this.$emit('close');
+    },
+  },
+
+  mounted() {
+    this.getData();
+    this.getFieldDevices();
+  },
+};
 </script>
+
 
   
   <style scoped>
