@@ -76,7 +76,7 @@
                     style="height:600px; width:100%;"
                 >
                     <GMapMarker
-                        v-if="fields.length > 1"
+                        v-if="fields.length"
 
                         v-for="(field, index) in fields"
                         :key="index"
@@ -177,7 +177,6 @@
                 for (let i = 0; i < this.fields?.length; i++) {
                     const response = await this.$api.getFieldDetail(fields[i].id, {
                 });
-
                     this.devices.push(response.data.data.blocks);
                 }
             },
