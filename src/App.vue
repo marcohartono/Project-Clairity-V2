@@ -244,7 +244,7 @@ export default {
   
   
   .c_navigation-bar-text5 {
-    color: #97be98;
+    color: #f2f7f2;
     font-size: 15px;
     font-style: normal;
     margin-top: 0;

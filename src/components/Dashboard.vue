@@ -8,11 +8,17 @@
             
             </b-col>
             <b-col style="align-items: right;">
-              <b-dropdown id="dropdown-1" text="Choose a Location" class="m-md-2">
-                <b-dropdown-item v-for="(field) in fields" 
-                  @click="changeField(field.id)"
-                >{{field.name}}</b-dropdown-item>
-              </b-dropdown>
+
+              <div class="form-group">
+                <label for="area">Area</label>
+                <select v-model="area" v-if="fields.length" @change="handleFieldChange">
+                  <option value="" disabled>Select Location</option>
+                  <option v-for="field in fields" :key="field.id" :value="field.id">
+                    {{ field.name }}
+                  </option>
+                </select>
+
+              </div>
             </b-col>
           </b-row>
           <b-row v-if="selectedField">
@@ -39,18 +45,24 @@
             </GMapMap>
           </b-row>
           <b-row>
-            <b-col md="1">
-              <h2>Section</h2>
-            </b-col>
-            <b-col md="11"> 
-              <b-dropdown
-              text="Select a Location"
-              
-              
-              >
+            <b-col> 
+              <!-- <b-dropdown text="Select a Location">
                 <b-dropdown-item @click="changeDevice(device?.devices[0])" v-for="(device) in chosenField?.blocks">{{device.name}}</b-dropdown-item>
-                
-              </b-dropdown>
+              </b-dropdown> -->
+
+              <div class="form-group">
+                <label for="area">Section</label>
+                <select v-model="selectedDeviceId" v-if="fields.length" @change="handleDeviceChange">
+                  <option value="" disabled>Select Location</option>
+                  <option 
+                    v-for="(device, index) in chosenField?.blocks" 
+                    :key="index" 
+                    :value="device.devices[0]">
+                    {{ device.name }}
+                  </option>
+                </select>
+
+              </div>
             </b-col>
           </b-row>
 
@@ -231,6 +243,7 @@ import { utils,writeFile } from "xlsx";
             devices: [],
             chosenField: null,
             fields:[],
+            area: '', 
             selectedField: null,
             mapStyles: [
                   {
@@ -261,6 +274,7 @@ import { utils,writeFile } from "xlsx";
             chartLabels: [],    // Holds x-axis labels (datetimes)
             chartDataset: [],  
             chartLoading: false,
+            selectedDeviceId: "",
             
 
         }
@@ -312,11 +326,38 @@ import { utils,writeFile } from "xlsx";
 
     mounted() {
     this.getData();
-    this.getFields();
+    this.getFields().then(() => {
+      
+    if (this.chosenField.blocks[0].devices[0]) {
+      this.changeDevice(this.chosenField.blocks[0].devices[0]);
+    } else {
+      console.error("No devices available to select.");
+    }
+  });
     
     },
     methods:
-    {
+    { 
+      handleDeviceChange() {
+        const selectedDevice = this.selectedDeviceId;
+        if (selectedDevice) {
+          this.changeDevice(selectedDevice);
+        } else {
+          console.error("Selected device not found");
+        }
+      },
+      handleFieldChange() {
+        if (this.area) {
+          this.changeField(this.area);
+        }
+      },
+      changeField(fieldId) {
+        const routeData = this.$router.resolve({
+          name: 'Dashboard',
+          params: { fieldId },
+        });
+        window.open(routeData.href, '_blank');
+      },
       updateChartData() {
         console.log("Updating chart data...");
         this.chartLoading = true;
@@ -330,9 +371,12 @@ import { utils,writeFile } from "xlsx";
 
           datePayload.payloads.forEach(payload => {
             const datetime = `${date} ${payload.time || ''}`.trim();
-
+            const formattedDatetime = format(
+              new Date(datetime),
+              "yyyy-MM-dd HH:mm" // Include both date and time
+            );
             // Add datetime to labels
-            this.chartLabels.push(datetime);
+            this.chartLabels.push(formattedDatetime);
 
             // Add the selected particulate's value to the dataset
             if (this.selectedParticulate === "CO2") {
@@ -467,13 +511,17 @@ import { utils,writeFile } from "xlsx";
         this.devicePayloads.forEach(datePayload => {
           const date = datePayload.date;
 
+
           // Loop through each payload in the date-specific payloads array
           datePayload.payloads.forEach(payload => {
             const datetime = `${date} ${payload.time || ''}`.trim();
-
+            const formattedDatetime = format(
+              new Date(datetime),
+              "yyyy-MM-dd HH:mm" // Include both date and time
+            );
             // Push formatted data into tableData array
             this.tableData.push({
-              datetime: datetime,
+              datetime: formattedDatetime,
               co2: payload.co2_ppm,
               temperature: payload.temperature,
               humidity: payload.relative_humidity,
@@ -701,6 +749,34 @@ b-table {
 .table-bordered td {
   background-color: #fff;
   color: #555;
+}
+
+.form-group {
+width: 100%;
+display: flex;
+align-items: center;
+margin-bottom: 15px;
+}
+
+
+.form-group label {
+flex: 1;
+background-color: #5c8e50;
+color: white;
+padding: 10px;
+border-radius: 8px 0 0 8px;
+font-weight: bold;
+text-align: center;
+}
+
+.form-group select {
+flex: 3;
+padding: 10px;
+border: 1px solid #ccc;
+border-radius: 0 8px 8px 0;
+outline: none;
+appearance: none;
+font-size: 1em;
 }
 
 </style>

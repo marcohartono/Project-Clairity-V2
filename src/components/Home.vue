@@ -1,7 +1,10 @@
 <template>
     <main>
+        
         <b-row class="landing-page">
-            <b-col>
+            <h1>Home</h1>
+
+            <b-col style="margin-top: 10px;">
                 <h2>Be Mindful of Your Workspace</h2>
                 <h1>Project Clarity</h1>
                 <p>Elevate productivity and well-being with cl(air)ity's smart air quality sensors </p>
@@ -18,7 +21,7 @@
                             <p>Deliver real-time data insights</p>
                             
                         </div>
-                    </b-col>
+                </b-col>
                     <b-col>
                         <div class="information-box">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-rulers" viewBox="0 0 16 16">
@@ -74,6 +77,7 @@
                     :zoom="11.5"
                     map-type-id="terrain"
                     style="height:600px; width:100%;"
+                    @click="activeInfoWindow = null"
                 >
                     <GMapMarker
                         v-if="fields.length"
@@ -82,6 +86,7 @@
                         :key="index"
                         :position="{lat: Number(field?.latitude), lng: Number(field?.longitude) }"
                         :clickable="true"
+                        :options="mapOptions"
                         @click="openInfoWindow(index, field.id)" 
                     >
                     <GMapInfoWindow  
@@ -95,7 +100,7 @@
                                 <b-col class="device-row">
                                     <p> {{device.name}}</p>
                                 </b-col>
-                                <b-col class="status-label">
+                                <b-col :class="getStatusClass(evaluateCO2(device.devices[0].latest_payload.co2_ppm))">
                                     <p>{{ evaluateCO2(device.devices[0].latest_payload.co2_ppm) }}</p>
                                 </b-col>
                             </b-row>
@@ -152,6 +157,20 @@
                 ],
                 activeInfoWindow: null,  
                 showModal: false,
+                mapOptions: {
+                    restriction: {
+                    latLngBounds: {
+                        north: -6.15,  // Northern boundary
+                        south: -6.25,  // Southern boundary
+                        east: 106.85,  // Eastern boundary
+                        west: 106.75,  // Western boundary
+                    },
+                    strictBounds: true, // Ensures users can't pan outside the bounds
+                    },
+                    zoomControl: true, // Enable zoom controls
+                    gestureHandling: "auto", // Allow zooming and panning within bounds
+                    draggable: true, // Allow panning
+                },
                 
             
             };
@@ -190,6 +209,17 @@
                 window.open(routeData.href, '_blank');
             },
             async openInfoWindow(index, fieldId ) {
+
+                if (this.activeInfoWindow === index) {
+                    // Close the info window if it's already open
+                    this.activeInfoWindow = null;
+                } else {
+                    // Open the new info window
+                    this.activeInfoWindow = index;
+
+                    // (Optional) Perform any additional logic for the clicked marker
+                    console.log(`Marker clicked: Field ID = ${fieldId}`);
+                }
                 console.log(fieldId)
                 this.activeInfoWindow = index;
                 this.selectedDevice = this.devices[index];
@@ -198,6 +228,8 @@
                 });
                 this.devices = response.data.data.blocks
 
+              
+                            
 
 
             },
@@ -210,6 +242,13 @@
                     return 'poor';
                 }
             },
+            getStatusClass(status) {
+                return {
+                    good: "status-good",
+                    moderate: "status-fair",
+                    poor: "status-poor",
+                }[status] || "status-default";
+                },
             async getData() {
                 try {
                         // const response = await axios.get(`${import.meta.env.VITE_API_URL}/devices`, {
@@ -237,6 +276,7 @@
                 }
     
             },
+            
             
     })
 

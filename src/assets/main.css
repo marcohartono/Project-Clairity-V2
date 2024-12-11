@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* General page styling */
 .landing-page {
     margin: 20px;
@@ -146,7 +150,34 @@ button:hover {
 }
 
 /* Status label styling */
-.status-label {
+.status-good {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.85em;
+    text-align: center;
+    color: #155724;
+}
+
+.status-fair {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.85em;
+    text-align: center;
+    color : #856404;
+}
+
+.status-poor {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.85em;
+    text-align: center;
+    color : #721c24;
+}
+
+.status-default {
     padding: 3px 10px;
     border-radius: 12px;
     font-weight: bold;
