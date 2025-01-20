@@ -20,6 +20,11 @@
     font-weight: bold;
 }
 
+.home {
+    font-size: 2.5em;
+    font-weight: bold;
+}
+
 /* Description paragraph styling */
 .landing-page p {
     font-size: 1.2em;
@@ -151,30 +156,33 @@ button:hover {
 
 /* Status label styling */
 .status-good {
-    padding: 3px 10px;
-    border-radius: 12px;
+    padding: 2px 5px;
+    border-radius: 10px;
     font-weight: bold;
     font-size: 0.85em;
     text-align: center;
     color: #155724;
+    outline: 2px solid #0f3d1a;
 }
 
 .status-fair {
-    padding: 3px 10px;
-    border-radius: 12px;
+    padding: 2px 5px;
+    border-radius: 10px;
     font-weight: bold;
     font-size: 0.85em;
     text-align: center;
     color : #856404;
+    outline: 2px solid #413104;
 }
 
 .status-poor {
-    padding: 3px 10px;
-    border-radius: 12px;
+    padding: 2px 5px;
+    border-radius: 10px;
     font-weight: bold;
     font-size: 0.85em;
     text-align: center;
     color : #721c24;
+    outline: 2px solid #4e1319;
 }
 
 .status-default {

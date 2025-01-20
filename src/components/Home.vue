@@ -1,8 +1,7 @@
 <template>
     <main>
-        
+        <h1 class="home">Home</h1>
         <b-row class="landing-page">
-            <h1>Home</h1>
 
             <b-col style="margin-top: 10px;">
                 <h2>Be Mindful of Your Workspace</h2>
@@ -245,7 +244,7 @@
             getStatusClass(status) {
                 return {
                     good: "status-good",
-                    moderate: "status-fair",
+                    fair: "status-fair",
                     poor: "status-poor",
                 }[status] || "status-default";
                 },

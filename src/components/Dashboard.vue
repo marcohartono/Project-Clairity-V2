@@ -293,7 +293,7 @@ import { utils,writeFile } from "xlsx";
           console.log("chartLabels:", this.chartLabels);    // Check if labels are valid
           console.log("chartDataset:", this.chartDataset); 
           // Maximum number of points to display on the chart
-          const maxPoints = 50;
+          const maxPoints = 100;
           const totalPoints = this.chartLabels.length;
 
           // Determine the interval dynamically to fit within maxPoints
