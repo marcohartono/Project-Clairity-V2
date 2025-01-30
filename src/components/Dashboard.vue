@@ -362,20 +362,32 @@ import { utils,writeFile } from "xlsx";
         console.log("Updating chart data...");
         this.chartLoading = true;
 
+        const rawData = this.devicePayloads;
+
+        // Compress data to fit 100 points
+        const step = Math.ceil(rawData.length / 100); // Calculate step size
+        const compressedData = rawData.filter((_, index) => index % step === 0);
+
+        // Reset labels and dataset
         this.chartLabels = [];
         this.chartDataset = [];
 
+        compressedData.sort((a, b) => new Date(a.date) - new Date(b.date));
+
         // Generate labels and data based on the selected particulate
-        this.devicePayloads.forEach(datePayload => {
-          const date = datePayload.date;
+        compressedData.forEach(datePayload => {
+
+          datePayload.payloads.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
 
           datePayload.payloads.forEach(payload => {
-            const datetime = `${date} ${payload.time || ''}`.trim();
+            // Combine date and time
+            const datetime = payload.datetime
             const formattedDatetime = format(
               new Date(datetime),
               "yyyy-MM-dd HH:mm" // Include both date and time
             );
-            // Add datetime to labels
+            
+            // Add formatted datetime to labels
             this.chartLabels.push(formattedDatetime);
 
             // Add the selected particulate's value to the dataset
@@ -393,10 +405,10 @@ import { utils,writeFile } from "xlsx";
           });
         });
 
-        setInterval(() => {
+        // Stop loading after a brief delay
+        setTimeout(() => {
           this.chartLoading = false;
         }, 1);
-        
       },
       evaluateCO2(co2Value) {
                 if (co2Value < 1000) {
@@ -407,10 +419,26 @@ import { utils,writeFile } from "xlsx";
                     return 'poor';
                 }
             },
-      formatDate(dateString) {
-      const date = new Date(dateString);
-      return format(date, "EEEE, dd MMM yyyy – HH:mm", { locale: enUS });
-    },
+            formatDate(dateString) {
+  // Check if dateString is valid
+  if (!dateString) {
+    console.error("Invalid dateString:", dateString);
+    return "Invalid Date";
+  }
+
+  // Convert the input string to a valid Date object
+  const parsedDate = new Date(dateString);
+
+  // Validate if the parsing worked
+  if (isNaN(parsedDate.getTime())) {
+    console.error("Failed to parse date:", dateString);
+    return "Invalid Date";
+  }
+
+  // Format the parsed date into 'yyyy-MM-dd HH:mm'
+  return format(parsedDate, 'yyyy-MM-dd HH:mm');
+},
+
       changeField(field_Id){
       const routeData = this.$router.resolve({
                     name: 'Dashboard',
@@ -509,12 +537,12 @@ import { utils,writeFile } from "xlsx";
 
         // Loop through each date-specific array in devicePayloads
         this.devicePayloads.forEach(datePayload => {
-          const date = datePayload.date;
 
 
           // Loop through each payload in the date-specific payloads array
           datePayload.payloads.forEach(payload => {
-            const datetime = `${date} ${payload.time || ''}`.trim();
+            const datetime = payload.datetime
+            console.log("Datetime:", datetime);
             const formattedDatetime = format(
               new Date(datetime),
               "yyyy-MM-dd HH:mm" // Include both date and time
