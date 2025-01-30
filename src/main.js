@@ -24,7 +24,7 @@ const app = createApp(App)
   .use(createBootstrap({ components: true, directives: true }))
   .use(VueGoogleMaps, {
     load: {
-        key: 'AIzaSyAu_FjQY1_hxZZUIGej6HLlein1hC1ugMQ',
+        key: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
     },
   })
 
