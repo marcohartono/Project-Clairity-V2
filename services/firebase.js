@@ -7,7 +7,7 @@ import { getFirestore, collection, addDoc, Timestamp } from 'firebase/firestore'
 // Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-    authDomain: "project-aqi-fe792.firebaseapp.com",
+    authDomain: import.meta.env.VITE_FIREBASE_DOMAIN,
     projectId: "project-aqi-fe792",
     storageBucket: "project-aqi-fe792.appspot.com",
     messagingSenderId: "978396529235",
